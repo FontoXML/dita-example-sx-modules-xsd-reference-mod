@@ -1,0 +1,60 @@
+{
+	":contextual-delete-properties": {
+		"label": "t__Remove property table",
+		"description": "t__Remove this property table from the topic.",
+		"icon": "times",
+		"steps": [
+			{
+				"type": "operation/delete-node"
+			}
+		]
+	},
+	":insert-properties": {
+		"label": "t__Property table",
+		"description": "t__Contains properties and their optional type, value and description.",
+		"steps": [
+			{
+				"type": "transform/setContextNodeIdToSelectionAncestor",
+				"data": {
+					"selectionAncestorNodeSpec": "self::refbody or self::refbodydiv"
+				}
+			},
+			{
+				"type": "operation/insert-after-selection",
+				"data": {
+					"contextNodeId": "{{contextNodeId}}",
+					"childNodeStructure": [
+						"properties",
+						["property",
+							["proptype",
+								[{ "bindTo": "selection", "empty": true }]
+							],
+							["propvalue"],
+							["propdesc"]
+						]
+					]
+				}
+			}
+		]
+	},
+	":contextual-delete-property": {
+		"label": "t__Remove row",
+		"description": "t__Remove this property from the property table.",
+		"icon": "times",
+		"steps": [
+			{
+				"type": "operation/delete-node"
+			}
+		]
+	},
+	":contextual-delete-prophead": {
+		"label": "t__Remove header row",
+		"description": "t__Remove this header from the property table.",
+		"icon": "times",
+		"steps": [
+			{
+				"type": "operation/delete-node"
+			}
+		]
+	}
+}

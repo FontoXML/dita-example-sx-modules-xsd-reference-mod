@@ -1,0 +1,125 @@
+{
+	":delete-properties-column": {
+		"label": "t__Remove column",
+		"description": "t__Remove the current column from the property table",
+		"icon": "times",
+		"steps": [
+			{
+				"type": "transform/setContextNodeIdToSelectionAncestorMatchingDitaClass",
+				"data": {
+					"parentDitaTypes": [
+						"reference/proptype", "reference/propvalue", "reference/propdesc",
+						"reference/proptypehd", "reference/propvaluehd", "reference/propdeschd"
+					]
+				}
+			},
+			{
+				"type": "operation/:contextual-delete-properties-column"
+			}
+		]
+	},
+	":contextual-delete-properties-column": {
+		"label": "t__Remove column",
+		"description": "t__Remove the current column from the property table",
+		"icon": "times",
+		"steps": {
+			"type": "custom-mutation/remove-properties-column"
+		}
+	},
+	":contextual-insert-proptype": {
+		"label": "t__Add type",
+		"description": "t__Add a type which corresponds with the current property",
+		"steps": [
+			{
+				"type": "operation/horizontal-insert",
+				"data": {
+					"childNodeStructure": [
+						"proptype",
+						[{ "bindTo": "selection", "empty": true }]
+					],
+					"contextNodeId": "{{contextNodeId}}"
+				}
+			}
+		]
+	},
+	":contextual-insert-proptypehd": {
+		"label": "t__Add type title",
+		"description": "t__Add a title for the property type column",
+		"steps": [
+			{
+				"type": "operation/horizontal-insert",
+				"data": {
+					"childNodeStructure": [
+						"proptypehd",
+						[{ "bindTo": "selection", "empty": true }]
+					],
+					"contextNodeId": "{{contextNodeId}}"
+				}
+			}
+		]
+	},
+	":contextual-insert-propvalue": {
+		"label": "t__Add value",
+		"description": "t__Add a value which corresponds with the current property",
+		"steps": [
+			{
+				"type": "operation/horizontal-insert",
+				"data": {
+					"childNodeStructure": [
+						"propvalue",
+						[{ "bindTo": "selection", "empty": true }]
+					],
+					"contextNodeId": "{{contextNodeId}}"
+				}
+			}
+		]
+	},
+	":contextual-insert-propvaluehd": {
+		"label": "t__Add value title",
+		"description": "t__Add a title for the value column",
+		"steps": [
+			{
+				"type": "operation/horizontal-insert",
+				"data": {
+					"childNodeStructure": [
+						"propvaluehd",
+						[{ "bindTo": "selection", "empty": true }]
+					],
+					"contextNodeId": "{{contextNodeId}}"
+				}
+			}
+		]
+	},
+	":contextual-insert-propdesc": {
+		"label": "t__Add description",
+		"description": "t__Add a description which corresponds with the current property",
+		"steps": [
+			{
+				"type": "operation/horizontal-insert",
+				"data": {
+					"childNodeStructure": [
+						"propdesc",
+						[{ "bindTo": "selection", "empty": true }]
+					],
+					"contextNodeId": "{{contextNodeId}}"
+				}
+			}
+		]
+	},
+	":contextual-insert-propdeschd": {
+		"label": "t__Add description title",
+		"description": "t__Add a title for the description column",
+		"steps": [
+			{
+				"type": "operation/horizontal-insert",
+				"data": {
+					"childNodeStructure": [
+						"propdeschd",
+						[{ "bindTo": "selection", "empty": true }]
+					],
+					"contextNodeId": "{{contextNodeId}}"
+				}
+			}
+		]
+	}
+}

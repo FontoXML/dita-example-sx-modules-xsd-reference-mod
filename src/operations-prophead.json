@@ -1,0 +1,65 @@
+{
+	":insert-prophead": {
+		"label": "t__Insert header row",
+		"description": "t__Contains titles for the property type, value and description columns.",
+		"steps": [
+			{
+				"type": "transform/setContextNodeIdToSelectionAncestorMatchingDitaClass",
+				"data": { "parentDitaTypes": ["reference/properties"] }
+			},
+			{
+				"type": "operation/:contextual-insert-prophead"
+			}
+		]
+	},
+	":contextual-insert-prophead": {
+		"label": "t__Add header",
+		"description": "t__Contains titles for the property type, value and description columns.",
+		"getStateSteps": [
+			{
+				"type": "operation/horizontal-insert",
+				"data": {
+					"childNodeStructure": [
+						"prophead"
+					]
+				}
+			}
+		],
+		"steps": [
+			{
+				"type": "transform/setChildNodeStructureForExistingColumns",
+				"data": {
+					"rowElement": "prophead",
+					"columns": [
+						{ "currentNodeName": "proptypehd", "otherNodeNames": ["proptype"] },
+						{ "currentNodeName": "propvaluehd", "otherNodeNames": ["propvalue"] },
+						{ "currentNodeName": "propdeschd", "otherNodeNames": ["propdesc"] }
+					]
+				}
+			},
+			{
+				"type": "operation/horizontal-insert",
+				"data": {
+					"contextNodeId": "{{contextNodeId}}"
+				}
+			}
+		]
+	},
+	":delete-prophead": {
+		"label": "t__Remove header row",
+		"description": "t__Remove the header from the property table.",
+		"icon": "times",
+		"steps": [
+			{
+				"type": "transform/setContextNodeIdToChildOfSelectionAncestorMatchingDitaClass",
+				"data": {
+					"parentDitaTypes": ["reference/properties"],
+					"childDitaTypes": ["reference/prophead"]
+				}
+			},
+			{
+				"type": "operation/delete-node"
+			}
+		]
+	}
+}

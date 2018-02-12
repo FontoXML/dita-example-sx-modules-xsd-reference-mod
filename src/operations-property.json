@@ -1,0 +1,100 @@
+{
+	":insert-property--below": {
+		"label": "t__Insert row below",
+		"description": "t__Contains a property type, value and description.",
+		"steps": [
+			{
+				"type": "transform/setContextNodeIdToSelectionAncestor",
+				"data": {
+					"selectionAncestorNodeSpec": "self::property"
+				}
+			},
+			{
+				"type": "operation/:contextual-insert-property--below"
+			}
+		]
+	},
+	":contextual-insert-property--below": {
+		"label": "t__Add row below",
+		"description": "t__Contains a property type, value and description.",
+		"steps": [
+			{
+				"type": "transform/setChildNodeStructureForExistingColumns",
+				"data": {
+					"parentElement": "properties",
+					"rowElement": "property",
+					"columns": [
+						{ "currentNodeName": "proptype", "otherNodeNames": ["proptypehd"] },
+						{ "currentNodeName": "propvalue", "otherNodeNames": ["propvaluehd"] },
+						{ "currentNodeName": "propdesc", "otherNodeNames": ["propdeschd"] }
+					]
+				}
+			},
+			{
+				"type": "operation/insert-next-to-context-node",
+				"data": {
+					"side": "after",
+					"contextNodeId": "{{contextNodeId}}",
+					"childNodeStructure": "{{childNodeStructure}}"
+				}
+			}
+		]
+	},
+	":insert-property--above": {
+		"label": "t__Insert row above",
+		"description": "t__Contains a property type, value and description.",
+		"steps": [
+			{
+				"type": "transform/setContextNodeIdToSelectionAncestor",
+				"data": {
+					"selectionAncestorNodeSpec": "self::property"
+				}
+			},
+			{
+				"type": "operation/:contextual-insert-property--above"
+			}
+		]
+	},
+	":contextual-insert-property--above": {
+		"label": "t__Add row above",
+		"description": "t__Contains a property type, value and description.",
+		"steps": [
+			{
+				"type": "transform/setChildNodeStructureForExistingColumns",
+				"data": {
+					"parentElement": "properties",
+					"rowElement": "property",
+					"columns": [
+						{ "currentNodeName": "proptype", "otherNodeNames": ["proptypehd"] },
+						{ "currentNodeName": "propvalue", "otherNodeNames": ["propvaluehd"] },
+						{ "currentNodeName": "propdesc", "otherNodeNames": ["propdeschd"] }
+					]
+				}
+			},
+			{
+				"type": "operation/insert-next-to-context-node",
+				"data": {
+					"side": "before",
+					"contextNodeId": "{{contextNodeId}}",
+					"childNodeStructure": "{{childNodeStructure}}"
+				}
+			}
+		]
+	},
+	":delete-property-prophead": {
+		"label": "t__Remove row",
+		"description": "t__Remove this property from the property table.",
+		"icon": "times",
+		"steps": [
+			{
+				"type": "transform/setContextNodeIdToSelectionAncestor",
+				"data": {
+					"selectionAncestorNodeSpec": "self::property or self::prophead"
+				}
+			},
+			{
+				"type": "operation/delete-node"
+			}
+		]
+	}
+}

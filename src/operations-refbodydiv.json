@@ -1,0 +1,60 @@
+{
+	":insert-refbodydiv": {
+		"label": "t__Body division",
+		"description": "t__Groups content without implying meaning.",
+		"alternatives": [
+			":_wrap-in-refbodydiv",
+			":_horizontal-insert-refbodydiv"
+		]
+	},
+	":_wrap-in-refbodydiv": {
+		"steps": [
+			{
+				"type": "transform/setContextNodeIdToSelectionAncestorMatchingDitaClass",
+				"data": {
+					"parentDitaTypes": ["topic/body", "topic/bodydiv"]
+				}
+			},
+			{
+				"type": "operation/wrap-selection-in-structure",
+				"data": {
+					"childNodeStructure": [
+						"refbodydiv",
+						[{ "bindTo": "selection.start", "empty": true }],
+						[{ "bindTo": "transclude", "multiple": true, "required": false }],
+						[{ "bindTo": "selection.end", "empty": true }]
+					],
+					"contextNodeId": "{{contextNodeId}}"
+				}
+			}
+		]
+	},
+	":_horizontal-insert-refbodydiv": {
+		"steps": [
+			{
+				"type": "transform/setContextNodeIdToSelectionAncestorMatchingDitaClass",
+				"data": {
+					"parentDitaTypes": ["topic/body", "topic/bodydiv"]
+				}
+			},
+			{
+				"type": "operation/horizontal-insert",
+				"data": {
+					"childNodeStructure": [
+						"refbodydiv",
+						[{ "bindTo": "selection", "empty": true }]
+					]
+				}
+			}
+		]
+	},
+	":contextual-unwrap-refbodydiv": {
+		"label": "t__Unwrap division",
+		"description": "t__Remove the division markup but preserve its content.",
+		"steps": [
+			{
+				"type": "operation/collapse-element"
+			}
+		]
+	}
+}
