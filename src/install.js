@@ -6,7 +6,7 @@ define([
 	'fontoxml-selectors/evaluateXPathToBoolean',
 	'fontoxml-selectors/evaluateXPathToFirstNode',
 
-	'./api/removePropertiesColumn'
+	'./api/removePropertiesColumnCustomMutation'
 ], function (
 	addCustomMutation,
 	readOnlyBlueprint,
@@ -22,36 +22,41 @@ define([
 	return function install () {
 		addCustomMutation('remove-properties-column', removePropertiesColumn);
 
+		/**
+		 * Prepares the `childNodeStructure` operation data for inserting a new row in a <properties>-like table.
+		 * @param  {Object} stepData
+		 * @param  {NodeId}  stepData.tableNodeId
+		 * @param  {string}  stepData.rowNodeName
+		 * @param  {Object}  stepData.columns
+		 * @param  {string[]}  stepData.columns.otherNodeNames
+		 * @param  {string}  stepData.columns.currentNodeName
+		 * @return {{ childNodeStructure: Stencil }}
+		 */
 		addTransform(
 			'setChildNodeStructureForExistingColumns',
 			function setChildNodeStructureForExistingColumns (stepData) {
-				stepData.childNodeStructure = [stepData.rowElement];
-
-				if (!stepData.contextNodeId) {
+				var tableNode = documentsManager.getNodeById(stepData.tableNodeId);
+				if (!tableNode) {
 					return stepData;
 				}
 
-				var contextNode = documentsManager.getNodeById(stepData.contextNodeId);
+				var isFirstCell = true;
+				stepData.childNodeStructure = [stepData.rowNodeName];
 
-				if (stepData.parentElement && contextNode.nodeName !== stepData.parentElement) {
-					contextNode = evaluateXPathToFirstNode('ancestor::' + stepData.parentElement, contextNode, readOnlyBlueprint);
-				}
-
-				var columnCounter = 0;
-
-				for (var i = 0; i < stepData.columns.length; i++) {
-					var selector = 'child::*/' + stepData.columns[i].currentNodeName;
-					selector += stepData.columns[i].otherNodeNames ? ' or child::*/' + stepData.columns[i].otherNodeNames.join(' or child::*/') : '';
-
-					if (evaluateXPathToBoolean(selector, contextNode, readOnlyBlueprint)) {
-						columnCounter++;
-						var cellNode = [stepData.columns[i].currentNodeName];
-						if (columnCounter === 1) {
-							cellNode.push([{ "bindTo": "selection", "empty": true }]);
-						}
-						stepData.childNodeStructure.push(cellNode);
+				stepData.columns.forEach(function (column) {
+					var selector = 'child::*/' + column.currentNodeName;
+					selector += column.otherNodeNames ? ' or child::*/' + column.otherNodeNames.join(' or child::*/') : '';
+					if (!evaluateXPathToBoolean(selector, tableNode, readOnlyBlueprint)) {
+						return;
 					}
-				}
+
+					var cellNodeStructure = [column.currentNodeName];
+					if (isFirstCell) {
+						isFirstCell = false;
+						cellNodeStructure.push([{ bindTo: 'selection', empty: true }]);
+					}
+					stepData.childNodeStructure.push(cellNodeStructure);
+				});
 
 				return stepData;
 			});

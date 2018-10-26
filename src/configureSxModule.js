@@ -6,9 +6,9 @@ define([
 	'fontoxml-families/configureAsStructure',
 	'fontoxml-families/configureAsTitleFrame',
 	'fontoxml-families/configureContextualOperations',
-	'fontoxml-families/createIconWidget',
+	'fontoxml-families/configureProperties',
+	'fontoxml-families/createElementMenuButtonWidget',
 	'fontoxml-families/createMarkupLabelWidget',
-	'fontoxml-families/createRelatedNodesWidget',
 	'fontoxml-families/createRelatedNodesQueryWidget',
 	'fontoxml-localization/t'
 ], function (
@@ -19,12 +19,12 @@ define([
 	configureAsStructure,
 	configureAsTitleFrame,
 	configureContextualOperations,
-	createIconWidget,
+	configureProperties,
+	createElementMenuButtonWidget,
 	createMarkupLabelWidget,
-	createRelatedNodesWidget,
 	createRelatedNodesQueryWidget,
 	t
-	) {
+) {
 	'use strict';
 
 	return function configureSxModule (sxModule) {
@@ -40,7 +40,7 @@ define([
 		});
 
 		// p in propdesc
-		configureAsBlock(sxModule, 'self::p[parent::propdesc] and not(preceding-sibling::p or following-sibling::p)', t('paragraph'), {
+		configureProperties(sxModule, 'self::p[parent::propdesc] and not(preceding-sibling::p or following-sibling::p)', {
 			emptyElementPlaceholderText: t('type the description')
 		});
 
@@ -56,7 +56,7 @@ define([
 		});
 
 		// p in propdeschd
-		configureAsBlock(sxModule, 'self::p[parent::propdeschd] and not(preceding-sibling::p or following-sibling::p)', t('paragraph'), {
+		configureProperties(sxModule, 'self::p[parent::propdeschd] and not(preceding-sibling::p or following-sibling::p)', {
 			emptyElementPlaceholderText: t('type the title for the descriptions')
 		});
 
@@ -71,11 +71,12 @@ define([
 				{ name: ':contextual-delete-properties' }
 			],
 			tabNavigationItemSelector: 'name() = ("proptypehd", "propvaluehd", "propdeschd", "proptype", "propvalue", "propdesc")',
-			visualization: {
-				blockHeaderLeft: [
-					createMarkupLabelWidget()
-				]
-			}
+			blockHeaderLeft: [
+				createMarkupLabelWidget()
+			],
+			blockOutsideAfter: [
+				createElementMenuButtonWidget()
+			]
 		});
 
 		// property
@@ -88,33 +89,30 @@ define([
 					query: './proptype',
 					width: 1,
 					hideColumnIfQueryIsTrue: 'parent::properties[not(child::property/proptype) and not(child::prophead/proptypehd)]',
-					clickOperationWhenEmpty: ':contextual-insert-proptype'
+					clickOperationWhenEmpty: ':property-insert-proptype'
 				},
 				{
 					query: './propvalue',
 					width: 1,
 					hideColumnIfQueryIsTrue: 'parent::properties[not(child::property/propvalue) and not(child::prophead/propvaluehd)]',
-					clickOperationWhenEmpty: ':contextual-insert-propvalue'
+					clickOperationWhenEmpty: ':property-insert-propvalue'
 				},
 				{
 					query: './propdesc',
 					width: 1,
 					hideColumnIfQueryIsTrue: 'parent::properties[not(child::property/propdesc) and not(child::prophead/propdeschd)]',
-					clickOperationWhenEmpty: ':contextual-insert-propdesc'
+					clickOperationWhenEmpty: ':property-insert-propdesc'
 				}
 			],
 			contextualOperations: [
-				{ name: ':contextual-insert-proptype' },
-				{ name: ':contextual-insert-propvalue' },
-				{ name: ':contextual-insert-propdesc' },
-				// @TODO:
-				// { name: ':contextual-insert-property--above', hideIn: ['breadcrumbs-menu'] },
-				// { name: ':contextual-insert-property--below', hideIn: ['breadcrumbs-menu'] },
+				{ name: ':property-insert-proptype' },
+				{ name: ':property-insert-propvalue' },
+				{ name: ':property-insert-propdesc' },
+				{ name: ':contextual-insert-property--above' },
+				{ name: ':contextual-insert-property--below' },
 				{ name: ':contextual-delete-property' }
 			],
-			visualization: {
-				borders: true
-			}
+			borders: true
 		});
 
 		// prophead
@@ -126,28 +124,28 @@ define([
 					query: './proptypehd',
 					width: 1,
 					hideColumnIfQueryIsTrue: 'parent::properties[not(child::property/proptype) and not(child::prophead/proptypehd)]',
-					clickOperationWhenEmpty: ':contextual-insert-proptypehd'
+					clickOperationWhenEmpty: ':prophead-insert-proptypehd'
 				},
-				{ query: './propvaluehd',
+				{
+					query: './propvaluehd',
 					width: 1,
 					hideColumnIfQueryIsTrue: 'parent::properties[not(child::property/propvalue) and not(child::prophead/propvaluehd)]',
-					clickOperationWhenEmpty: ':contextual-insert-propvaluehd'
+					clickOperationWhenEmpty: ':prophead-insert-propvaluehd'
 				},
-				{ query: './propdeschd',
+				{
+					query: './propdeschd',
 					width: 1,
 					hideColumnIfQueryIsTrue: 'parent::properties[not(child::property/propdesc) and not(child::prophead/propdeschd)]',
-					clickOperationWhenEmpty: ':contextual-insert-propdeschd'
+					clickOperationWhenEmpty: ':prophead-insert-propdeschd'
 				}
 			],
-			visualization: {
-				borders: true,
-				backgroundColor: 'black',
-				showWhen: 'always'
-			},
+			borders: true,
+			backgroundColor: 'black',
+			showWhen: 'always',
 			contextualOperations: [
-				{ name: ':contextual-insert-proptypehd' },
-				{ name: ':contextual-insert-propvaluehd' },
-				{ name: ':contextual-insert-propdeschd' },
+				{ name: ':prophead-insert-proptypehd' },
+				{ name: ':prophead-insert-propvaluehd' },
+				{ name: ':prophead-insert-propdeschd' },
 				{ name: ':contextual-delete-prophead' }
 			]
 		});
@@ -173,7 +171,7 @@ define([
 		});
 
 		// p in proptypehd
-		configureAsBlock(sxModule, 'self::p[parent::proptypehd] and not(preceding-sibling::p or following-sibling::p)', t('paragraph'), {
+		configureProperties(sxModule, 'self::p[parent::proptypehd] and not(preceding-sibling::p or following-sibling::p)', {
 			emptyElementPlaceholderText: t('type the title for the property type')
 		});
 
@@ -200,7 +198,7 @@ define([
 		});
 
 		// p in propvaluehd
-		configureAsBlock(sxModule, 'self::p[parent::propvaluehd] and not(preceding-sibling::p or following-sibling::p)', t('paragraph'), {
+		configureProperties(sxModule, 'self::p[parent::propvaluehd] and not(preceding-sibling::p or following-sibling::p)', {
 			emptyElementPlaceholderText: t('type the title for the property value')
 		});
 
@@ -210,9 +208,20 @@ define([
 		//     generic sections and examples, in any sequence or number. Category: Reference elements
 		configureAsStructure(sxModule, 'self::refbody', t('body'), {
 			defaultTextContainer: 'section',
-			ignoredForNavigationNextToSelector: 'false()',
 			isRemovableIfEmpty: false
 		});
+
+		// section in refbody/refbodydiv
+		configureContextualOperations(sxModule, 'self::section[(parent::refbody or parent::refbodydiv) and child::*[not(self::table or self::simpletable)]]', [
+			{ name: ':section-insert-title' },
+			{ name: ':contextual-delete-section' }
+		]);
+
+		// example in refbody/refbodydiv
+		configureContextualOperations(sxModule, 'self::example[(parent::refbody or parent::refbodydiv) and child::*[not(self::table or self::simpletable)]]', [
+			{ name: ':example-insert-title' },
+			{ name: ':contextual-delete-example' }
+		]);
 
 		// refbodydiv
 		//     The <refbodydiv> element is similar to the <bodydiv> element in that it provides an informal
@@ -225,14 +234,14 @@ define([
 			contextualOperations: [
 				{ name: ':contextual-unwrap-refbodydiv' }
 			],
-			emptyElementPlaceholderText: t('type the content'),
 			defaultTextContainer: 'section',
-			ignoredForNavigationNextToSelector: 'false()',
-			visualization: {
-				blockHeaderLeft: [
-					createMarkupLabelWidget()
-				]
-			}
+			emptyElementPlaceholderText: t('type the content'),
+			blockHeaderLeft: [
+				createMarkupLabelWidget()
+			],
+			blockOutsideAfter: [
+				createElementMenuButtonWidget()
+			]
 		});
 
 		// reference
@@ -248,38 +257,30 @@ define([
 		//     elements
 		configureAsSheetFrame(sxModule, 'self::reference', t('reference'), {
 			defaultTextContainer: 'refbody',
-			titleQuery: './title',
-			visualization: {
-				blockFooter: [
-					createRelatedNodesQueryWidget('./related-links'),
-					createRelatedNodesWidget('self::fn[not(@conref) and fonto:in-inline-layout(.)]')
-				],
-				blockHeaderLeft: [
-					createMarkupLabelWidget()
-				]
-			}
+			titleQuery: './title//text()[not(ancestor::*[name() = ("sort-at", "draft-comment", "foreign", "unknown", "required-cleanup", "image")])]/string() => string-join()',
+			blockFooter: [
+				createRelatedNodesQueryWidget('./related-links'),
+				createRelatedNodesQueryWidget('descendant::fn[not(@conref) and fonto:in-inline-layout(.)]')
+			],
+			blockHeaderLeft: [
+				createMarkupLabelWidget()
+			]
 		});
 
 		// reference nested in topic
-		configureAsFrame(sxModule, 'self::*[fonto:dita-class(., "reference/reference")] and ancestor::*[fonto:dita-class(., "topic/topic")]', undefined, {
+		configureAsFrame(sxModule, 'self::reference[parent::*[fonto:dita-class(., "topic/topic")]]', undefined, {
 			defaultTextContainer: 'refbody',
-			titleQuery: './title',
-			visualization: {
-				blockFooter: [
-					createRelatedNodesQueryWidget('./related-links')
-				],
-				blockHeaderLeft: [
-					createMarkupLabelWidget()
-				]
-			}
+			blockFooter: [
+				createRelatedNodesQueryWidget('./related-links')
+			],
+			blockHeaderLeft: [
+				createMarkupLabelWidget()
+			]
 		});
 
 		// title in reference
-		configureAsTitleFrame(sxModule, 'self::title[parent::reference]', t('title'), {
-			emptyElementPlaceholderText: t('type the title'),
-			visualization: {
-				fontVariation: 'document-title'
-			}
+		configureAsTitleFrame(sxModule, 'self::title[parent::reference]', undefined, {
+			fontVariation: 'document-title'
 		});
 
 		// refsyn
@@ -292,26 +293,25 @@ define([
 				{ name: ':refsyn-insert-title' },
 				{ name: ':contextual-unwrap-refsyn' }
 			],
-			emptyElementPlaceholderText: t('type the syntax'),
 			defaultTextContainer: 'p',
+			emptyElementPlaceholderText: t('type the syntax'),
 			titleQuery: './title',
-			visualization: {
-				blockHeaderLeft: [
-					createMarkupLabelWidget()
-				]
-			}
+			blockHeaderLeft: [
+				createMarkupLabelWidget()
+			],
+			blockOutsideAfter: [
+				createElementMenuButtonWidget()
+			]
 		});
 
 		configureContextualOperations(sxModule, 'self::refsyn[(parent::refbody or parent::refbodydiv) and child::*[not(self::table or self::simpletable)]]', [
-			{ name: ':refsyn-insert-title' }
+			{ name: ':refsyn-insert-title' },
+			{ name: ':contextual-delete-refsyn' }
 		]);
 
 		// title in refsyn
-		configureAsTitleFrame(sxModule, 'self::title[parent::refsyn]', t('title'), {
-			emptyElementPlaceholderText: t('type the title'),
-			visualization: {
-				fontVariation: 'section-title'
-			}
+		configureAsTitleFrame(sxModule, 'self::title[parent::refsyn]', undefined, {
+			fontVariation: 'section-title'
 		});
 	};
 });
